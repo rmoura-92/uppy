@@ -27,13 +27,16 @@ module.exports = function s3 (config) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
 
-    if (!client || typeof config.bucket !== 'string') {
+    if (!client || !(typeof config.bucket === 'string' || typeof config.bucket === 'function')) {
       res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
       return
     }
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
+
+    const bucket = (typeof config.bucket === 'function') ? config.bucket(req) : config.bucket
+
     if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
       return
@@ -52,7 +55,7 @@ module.exports = function s3 (config) {
     })
 
     client.createPresignedPost({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
@@ -93,13 +96,21 @@ module.exports = function s3 (config) {
       res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
       return
     }
+
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+
     if (typeof type !== 'string') {
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
 
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
+
     const params = {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       ContentType: type,
       Metadata: metadata,
@@ -143,11 +154,17 @@ module.exports = function s3 (config) {
       return
     }
 
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
     let parts = []
 
     function listPartsPage (startAt) {
       client.listParts({
-        Bucket: config.bucket,
+        Bucket: bucket,
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
@@ -195,9 +212,15 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
       return
     }
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
 
     client.getSignedUrl('uploadPart', {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
@@ -247,10 +270,17 @@ module.exports = function s3 (config) {
       return
     }
 
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
+
     Promise.all(
       partNumbersArray.map((partNumber) => {
         return client.getSignedUrlPromise('uploadPart', {
-          Bucket: config.bucket,
+          Bucket: bucket,
           Key: key,
           UploadId: uploadId,
           PartNumber: partNumber,
@@ -290,8 +320,15 @@ module.exports = function s3 (config) {
       return
     }
 
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
+
     client.abortMultipartUpload({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
     }, (err) => {
@@ -334,8 +371,13 @@ module.exports = function s3 (config) {
       return
     }
 
+    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
+      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+      return
+    }
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
     client.completeMultipartUpload({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
