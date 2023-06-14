@@ -27,7 +27,7 @@ module.exports = function s3 (config) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
 
-    if (!client || !(typeof config.bucket === 'string' || typeof config.bucket === 'function')) {
+    if (!client || (typeof config.bucket !== 'string' && typeof config.bucket !== 'function')) {
       res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
       return
     }
@@ -35,7 +35,7 @@ module.exports = function s3 (config) {
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
 
-    const bucket = (typeof config.bucket === 'function') ? config.bucket(req) : config.bucket
+    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
 
     if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
@@ -97,8 +97,8 @@ module.exports = function s3 (config) {
       return
     }
 
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
 
@@ -154,8 +154,8 @@ module.exports = function s3 (config) {
       return
     }
 
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
 
@@ -212,8 +212,8 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
       return
     }
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
 
@@ -270,8 +270,8 @@ module.exports = function s3 (config) {
       return
     }
 
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
 
@@ -320,8 +320,8 @@ module.exports = function s3 (config) {
       return
     }
 
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
 
@@ -371,8 +371,8 @@ module.exports = function s3 (config) {
       return
     }
 
-    if (typeof config.bucket !== 'function' || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
+    if (typeof config.bucket !== 'function' && typeof config.bucket !== 'string') {
+      res.status(500).json({ error: 's3: bucket key must be a string or a function resolving the bucket string' })
       return
     }
     const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
