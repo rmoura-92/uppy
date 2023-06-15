@@ -10,7 +10,7 @@ function rfc2047Encode (data) {
 }
 
 function isValidBucket (bucket) {
-  return typeof bucket === 'string' || bucket instanceof String
+  return typeof bucket === 'string' && bucket !== ''
 }
 
 const ERROR_BAD_CONFIG = 'This Companion server does not support uploading to S3'
