@@ -10,7 +10,7 @@ function rfc2047Encode (data) {
 }
 
 function isValidBucket (bucket) {
-  return typeof bucket !== 'string' || bucket === ''
+  return typeof bucket === 'string' || bucket instanceof String
 }
 
 const ERROR_BAD_CONFIG = 'This Companion server does not support uploading to S3'
@@ -22,6 +22,10 @@ module.exports = function s3 (config) {
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
+  }
+
+  function getBucket (req) {
+    return typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
   }
 
   /**
@@ -50,9 +54,9 @@ module.exports = function s3 (config) {
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
 
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -124,7 +128,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -176,7 +180,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -236,7 +240,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -294,7 +298,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -344,7 +348,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
@@ -395,7 +399,7 @@ module.exports = function s3 (config) {
     }
 
     const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
-    if (isValidBucket(bucket)) {
+    if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
