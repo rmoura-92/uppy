@@ -127,7 +127,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
@@ -179,7 +179,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
@@ -239,7 +239,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
@@ -297,7 +297,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
@@ -347,7 +347,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
@@ -398,7 +398,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = typeof config.getBucket === 'function' ? config.getBucket(req) : config.bucket
+    const bucket = getBucket(req)
     if (!isValidBucket(bucket)) {
       logger.error(new TypeError(ERROR_BAD_BUCKET))
       res.status(400).json({ error: ERROR_BAD_CONFIG })
