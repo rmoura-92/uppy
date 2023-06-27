@@ -106,6 +106,7 @@
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
+    "postinstall": "pnpm build:companion",
     "start:companion": "bash bin/companion.sh",
     "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
